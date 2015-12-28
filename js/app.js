@@ -4,18 +4,18 @@ var latitude    = null;
 var longitude   = null;
 
 var sunState    = null;
+var amPM        = null;
 
 var currentdate = new Date(); 
 var zoneOffset  = currentdate.getTimezoneOffset() / 60;
 var dateToday   = currentdate.getDate() + "-" + (currentdate.getMonth()+1) + "-" + currentdate.getFullYear();
 var timeToday   = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+var varHours    = null;
 
 var storyTitle  = null;
 var storyGuts   = null;
 
 $(document).ready(function() {
-	storytimeCheck();
-
 	locationGet();
 	timeStats();    
 	callReddit();
@@ -63,6 +63,9 @@ function callSun() {
 		console.log(echo);
 
 		sunSet = echo.results.sunset;
+
+		timeSplit(sunSet);
+		storytimeCheck();
 	});
 
 }
@@ -132,7 +135,51 @@ function storytimeCheck() {
 }
 
 function sunstateCheck() {
+	if ( currentdate.getHours() >= 12 ) {
+		amPM      = 'PM';
+		
+		if ( currentdate.getMinutes() <= 9 && currentdate.getSeconds() <= 9 ) {
+			timeToday = (currentdate.getHours() - 12) + "0" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
+			timeToday = parseInt(timeToday, 10);
+		} else if ( currentdate.getMinutes() >= 10 && currentdate.getSeconds() <= 9 ) {
+			timeToday = (currentdate.getHours() - 12) + "" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
+			timeToday = parseInt(timeToday, 10);
+		} else if ( currentdate.getMinutes() <= 9 && currentdate.getSeconds() >= 10 ) {
+			timeToday = (currentdate.getHours() - 12) + "0" + currentdate.getMinutes() + "" + currentdate.getSeconds();
+			timeToday = parseInt(timeToday, 10);
+		} else {
+			timeToday = (currentdate.getHours() - 12) + "" + currentdate.getMinutes() + "" + currentdate.getSeconds();
+			timeToday = parseInt(timeToday, 10);
+		}
 
+	} else {
+		amPM     = 'AM';
+
+		if ( currentdate.getMinutes() <= 9 && currentdate.getSeconds() <= 9 ) {
+			timeToday = currentdate.getHours() + "0" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
+			timeToday = parseInt(timeToday, 10);
+		} else if ( currentdate.getMinutes() >= 10 && currentdate.getSeconds() <= 9 ) {
+			timeToday = currentdate.getHours() + "" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
+			timeToday = parseInt(timeToday, 10);
+		} else if ( currentdate.getMinutes() <= 9 && currentdate.getSeconds() >= 10 ) {
+			timeToday = currentdate.getHours() + "0" + currentdate.getMinutes() + "" + currentdate.getSeconds();
+			timeToday = parseInt(timeToday, 10);
+		} else {
+			timeToday = currentdate.getHours() + "" + currentdate.getMinutes() + "" + currentdate.getSeconds();
+			timeToday = parseInt(timeToday, 10);
+		}
+	}
+
+	console.log(timeToday);
+	console.log(amPM);
+
+	if ( timeToday == sunSet ) {
+		console.log('The Sun is setting.');
+	} else if ( timeToday < sunSet ) {
+		console.log('The Sun has not set.');
+	} else {
+		console.log('The Sun has set. Do not be afraid.')
+	}
 }
 
 function sunSet() {
@@ -140,5 +187,16 @@ function sunSet() {
 }
 
 function sunRise() {
+
+}
+
+function timeSplit(stringToSplit) {
+	var firstArray  = stringToSplit.split(':');
+	var noAmPm = firstArray[2].split(' ');
+
+	sunSet = firstArray[0] + firstArray[1] + noAmPm[0];
+	sunSet = parseInt(sunSet, 10);
+	
+	console.log(sunSet);
 
 }
