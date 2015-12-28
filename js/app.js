@@ -3,15 +3,19 @@ var inputLocation = null;
 var latitude    = null;
 var longitude   = null;
 
-var sunSet      = null;
-var sunRise     = null;
+var sunState    = null;
 
 var currentdate = new Date(); 
 var zoneOffset  = currentdate.getTimezoneOffset() / 60;
 var dateToday   = currentdate.getDate() + "-" + (currentdate.getMonth()+1) + "-" + currentdate.getFullYear();
 var timeToday   = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
 
+var storyTitle  = null;
+var storyGuts   = null;
+
 $(document).ready(function() {
+	storytimeCheck();
+
 	locationGet();
 	timeStats();    
 	callReddit();
@@ -32,11 +36,11 @@ function callGoogle() {
 		method: "GET"
 	})
 	.done(function(echo) {
+		console.log(echo);
+
 		latitude  = echo.results[0].geometry.location.lat;
 		longitude = echo.results[0].geometry.location.lng;
-		console.log("Lat: " + latitude);
-		console.log("Lng: " + longitude);
-		console.log(echo);
+
 		callSun();
 	});
 }
@@ -56,9 +60,9 @@ function callSun() {
 		type: 'GET'
 	})
 	.done(function(echo) {
-		sunSet = echo.results.sunset;
-		console.log(sunSet);
 		console.log(echo);
+
+		sunSet = echo.results.sunset;
 	});
 
 }
@@ -66,7 +70,10 @@ function callSun() {
 // Reddit API request
 function callReddit() {
 	var redditRequest = {
-		sort: 'new'
+		// q: "NOT+%28flair%3ASeries%29", 
+		// restrict_sr: "on",
+		sort: 'top'
+		// q=NOT+%28flair%3ASeries%29&restrict_sr=on
 	};
 
 	$.ajax({
@@ -77,12 +84,23 @@ function callReddit() {
 	})
 	.done(function(echo) {
  		console.log(echo);
- 		// console.log(echo.data.children[1].data.selftext);
 
- 		// $.each(echo.data.children, function(i, item) {
- 		// 	console.log(item.data.title);
- 		// });
+ 		var randomIndex = numberGenerate();
+
+ 		storyTitle  = echo.data.children[randomIndex].data.title;
+ 		storyGuts   = echo.data.children[randomIndex].data.selftext;
+ 		
+ 		pushStory();
 	});
+}
+
+function numberGenerate() {
+    return Math.floor(Math.random() * 21);
+}
+
+function pushStory() {
+	$("#story-title").append(storyTitle);
+	$("#story-guts").append(storyGuts);
 }
 
 function timeStats() {
@@ -95,11 +113,32 @@ function timeStats() {
 function locationGet() {
 	$("#input-location").submit(function(event) {
 		event.preventDefault();
+
 		inputLocation = $("#location-form").val();
 		console.log(inputLocation);
+		
 		callGoogle();
+		
 		$("#input-location").hide();
 	});
 }
 
-function sunSet()
+function storytimeCheck() {
+	if ( sunState == "set" ) {
+		$("#result").show();
+	} else {
+		$("#result").hide();
+	}
+}
+
+function sunstateCheck() {
+
+}
+
+function sunSet() {
+
+}
+
+function sunRise() {
+
+}
