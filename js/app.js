@@ -5,6 +5,8 @@ var longitude   = null;
 
 var sunState    = null;
 var amPM        = null;
+var nightTime   = null;
+var dayTime     = null;
 
 var currentdate = new Date(); 
 var zoneOffset  = currentdate.getTimezoneOffset() / 60;
@@ -63,9 +65,12 @@ function callSun() {
 		console.log(echo);
 
 		sunSet = echo.results.sunset;
-
+		console.log(sunSet);
 		timeSplit(sunSet);
-		storytimeCheck();
+		sunStateCheck();
+
+		setStory();
+
 	});
 
 }
@@ -97,6 +102,7 @@ function callReddit() {
 	});
 }
 
+// Assign a random story and push it to HTML elements
 function numberGenerate() {
     return Math.floor(Math.random() * 21);
 }
@@ -106,12 +112,14 @@ function pushStory() {
 	$("#story-guts").append(storyGuts);
 }
 
+// Console command -- log the current time at user's PC
 function timeStats() {
     console.log("Date: " + dateToday);
     console.log("Time: " + timeToday);
     console.log("Time difference from UTC: " + zoneOffset);
-    console.log("Time adjusted to UTC: " + (currentdate.getHours()-zoneOffset) + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
+    console.log("Time adjusted to UTC: " + (currentdate.getHours() + zoneOffset) + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
 }
+
 
 function locationGet() {
 	$("#input-location").submit(function(event) {
@@ -126,29 +134,29 @@ function locationGet() {
 	});
 }
 
-function storytimeCheck() {
-	if ( sunState == "set" ) {
+function setStory() {
+	if ( nightTime ) {
 		$("#result").show();
 	} else {
 		$("#result").hide();
 	}
 }
 
-function sunstateCheck() {
+function sunStateCheck() {
 	if ( currentdate.getHours() >= 12 ) {
 		amPM      = 'PM';
 		
 		if ( currentdate.getMinutes() <= 9 && currentdate.getSeconds() <= 9 ) {
-			timeToday = (currentdate.getHours() - 12) + "0" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
+			timeToday = (currentdate.getHours() - 7) + "0" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
 			timeToday = parseInt(timeToday, 10);
 		} else if ( currentdate.getMinutes() >= 10 && currentdate.getSeconds() <= 9 ) {
-			timeToday = (currentdate.getHours() - 12) + "" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
+			timeToday = (currentdate.getHours() - 7) + "" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
 			timeToday = parseInt(timeToday, 10);
 		} else if ( currentdate.getMinutes() <= 9 && currentdate.getSeconds() >= 10 ) {
-			timeToday = (currentdate.getHours() - 12) + "0" + currentdate.getMinutes() + "" + currentdate.getSeconds();
+			timeToday = (currentdate.getHours() - 7) + "0" + currentdate.getMinutes() + "" + currentdate.getSeconds();
 			timeToday = parseInt(timeToday, 10);
 		} else {
-			timeToday = (currentdate.getHours() - 12) + "" + currentdate.getMinutes() + "" + currentdate.getSeconds();
+			timeToday = (currentdate.getHours() - 7) + "" + currentdate.getMinutes() + "" + currentdate.getSeconds();
 			timeToday = parseInt(timeToday, 10);
 		}
 
@@ -156,39 +164,35 @@ function sunstateCheck() {
 		amPM     = 'AM';
 
 		if ( currentdate.getMinutes() <= 9 && currentdate.getSeconds() <= 9 ) {
-			timeToday = currentdate.getHours() + "0" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
+			timeToday = (currentdate.getHours() + 5) + "0" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
 			timeToday = parseInt(timeToday, 10);
 		} else if ( currentdate.getMinutes() >= 10 && currentdate.getSeconds() <= 9 ) {
-			timeToday = currentdate.getHours() + "" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
+			timeToday = (currentdate.getHours() + 5) + "" + currentdate.getMinutes() + "0" + currentdate.getSeconds();
 			timeToday = parseInt(timeToday, 10);
 		} else if ( currentdate.getMinutes() <= 9 && currentdate.getSeconds() >= 10 ) {
-			timeToday = currentdate.getHours() + "0" + currentdate.getMinutes() + "" + currentdate.getSeconds();
+			timeToday = (currentdate.getHours() + 5) + "0" + currentdate.getMinutes() + "" + currentdate.getSeconds();
 			timeToday = parseInt(timeToday, 10);
 		} else {
-			timeToday = currentdate.getHours() + "" + currentdate.getMinutes() + "" + currentdate.getSeconds();
+			timeToday = (currentdate.getHours() + 5) + "" + currentdate.getMinutes() + "" + currentdate.getSeconds();
 			timeToday = parseInt(timeToday, 10);
 		}
 	}
 
-	console.log(timeToday);
-	console.log(amPM);
+	console.log(timeToday + " " + amPM);
 
 	if ( timeToday == sunSet ) {
 		console.log('The Sun is setting.');
 	} else if ( timeToday < sunSet ) {
-		console.log('The Sun has not set.');
+		console.log('The Sun has not set. Everything is calm.');
+		dayTime   = true;
+		nightTime = false;
 	} else {
+		dayTime   = false;
+		nightTime = true;
 		console.log('The Sun has set. Do not be afraid.')
 	}
 }
 
-function sunSet() {
-
-}
-
-function sunRise() {
-
-}
 
 function timeSplit(stringToSplit) {
 	var firstArray  = stringToSplit.split(':');
@@ -198,5 +202,13 @@ function timeSplit(stringToSplit) {
 	sunSet = parseInt(sunSet, 10);
 	
 	console.log(sunSet);
+
+}
+
+function setScenery() {
+
+// set styles for page
+// set gif and image backgrounds
+// set any other design pieces I need for story
 
 }

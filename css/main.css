@@ -1,3 +1,7 @@
 body {
 	background-color: #fffdc8; /*night: #314d65*/
 }
+
+#result {
+	display: none;
+}
