@@ -1,11 +1,41 @@
 body {
-	background-color: #fffdc8; /*night: #314d65*/
+	background-color: #fffdc8; /* night: #314d65 */  /* day: #fffdc8; */
 }
 
 #result {
 	display: none;
 }
 
+/* Video container */
+#video {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	height: auto;
+	width: auto;
+	z-index: -100;
+	transform: translateX(-50%) translateY(-50%);
+	background-size: cover;
+}
+
 #night-video {
 	display: none;
+}
+
+/* Zipcode form */
+#form-container {
+	width: 40%;
+	margin-top: 20rem;
+	margin-right: auto;
+	margin-left: auto;
+	z-index: 100;
+
+	text-align: center;
+	color: #FFFFFF;
+}
+
+#location-form {
+	width: 200px;
+	height: 26px;
+	text-align: center;
 }
