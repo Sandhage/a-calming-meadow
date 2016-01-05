@@ -18,9 +18,21 @@ var storyTitle  = null;
 var storyGuts   = null;
 
 $(document).ready(function() {
+	callReddit();
+
+	$("#impatient-button").click(function() {
+		$("#form-container").hide();
+
+		nightTime = true;
+		dayTime   = false;
+		
+		setScenery();
+		setStory();
+	});
+
 	locationGet();
 	timeStats();    
-	callReddit();
+
 });
 
 
@@ -136,6 +148,7 @@ function locationGet() {
 
 function setStory() {
 	if ( nightTime ) {
+		$("#form-container").hide();
 		$("#result").show();
 	} else {
 		$("#result").hide();
@@ -191,6 +204,8 @@ function sunStateCheck() {
 		nightTime = true;
 		console.log('The Sun has set. Do not be afraid.')
 	}
+
+	setScenery();
 }
 
 
@@ -207,8 +222,9 @@ function timeSplit(stringToSplit) {
 
 function setScenery() {
 
-// set styles for page
-// set gif and image backgrounds
-// set any other design pieces I need for story
+	if ( !dayTime ) {
+		$("#day-video").hide();
+		$("#night-video").show();
+	}
 
 }
