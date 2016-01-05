@@ -12,7 +12,7 @@ body {
 	color: #FFFFFF;
 }
 
-#result > p {
+#result > div {
 	padding: 5px;
 	background: rgba(0,0,0,0.6);
 
@@ -27,7 +27,7 @@ body {
 		margin-left: auto;
 	}
 
-	#result > p {
+	#result > div {
 		padding-left: 10px;
 		padding-right: 10px;
 	}
