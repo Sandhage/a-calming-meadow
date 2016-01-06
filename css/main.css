@@ -15,6 +15,7 @@ body {
 #result > div {
 	padding: 5px;
 	background: rgba(0,0,0,0.6);
+	border-radius: 7px;
 
 	text-align: justify;
 }
