@@ -22,7 +22,7 @@ $(document).ready(function() {
 
 	$("#impatient-button").click(function() {
 		$("#form-container").hide();
-
+		// $("body").css(background-color: #fffdc8) -- the code here is obviously wrong, but I'm in a car and can't check my reference material
 		nightTime = true;
 		dayTime   = false;
 		
