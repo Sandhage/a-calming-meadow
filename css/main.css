@@ -9,7 +9,7 @@ body {
 	margin-right: 15px;
 	margin-left: 15px;
 
-	color: #FFFFFF;
+	color: #FFF;
 }
 
 #result > div {
@@ -58,7 +58,7 @@ body {
 	z-index: 100;
 
 	text-align: center;
-	color: #FFFFFF;
+	color: #FFF;
 }
 
 #form-container > button {
@@ -67,7 +67,7 @@ body {
 	margin-top: 0.75rem;
 
 	background: #fffdc8;
-	color: #000000;
+	color: #000;
 	border: none;
 	border-radius: 7px;
 }
@@ -76,6 +76,7 @@ body {
 	width: 200px;
 	height: 26px;
 	text-align: center;
+	color: black;
 }
 
 @media only screen and (min-width : 992px) {
