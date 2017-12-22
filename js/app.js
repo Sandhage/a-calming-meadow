@@ -68,7 +68,7 @@ function callSun() {
 	};
 
 	$.ajax({
-		url: 'http://api.sunrise-sunset.org/json',
+		url: 'https://api.sunrise-sunset.org/json',
 		data: sunRequest,
 		dataType: 'jsonp',
 		type: 'GET'
@@ -97,7 +97,7 @@ function callReddit() {
 	};
 
 	$.ajax({
-		url: 'http://www.reddit.com/r/nosleep/new.json',
+		url: 'https://www.reddit.com/r/nosleep/new.json',
 		data: redditRequest,
 		dataType: 'json',
 		type: 'GET'
@@ -132,13 +132,11 @@ function timeStats() {
     console.log("Time adjusted to UTC: " + (currentdate.getHours() + zoneOffset) + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
 }
 
-
 function locationGet() {
 	$("#input-location").submit(function(event) {
 		event.preventDefault();
 
 		inputLocation = $("#location-form").val();
-		console.log(inputLocation);
 		
 		callGoogle();
 		
