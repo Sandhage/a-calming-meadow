@@ -1,21 +1,17 @@
-var inputLocation = null;
+let sunSet      = null;
+let sunState    = null;
+let amPM        = null;
+let nightTime   = null;
+let dayTime     = null;
 
-var latitude    = null;
-var longitude   = null;
+let currentdate = new Date(); 
+let zoneOffset  = currentdate.getTimezoneOffset() / 60;
+let dateToday   = currentdate.getDate() + "-" + (currentdate.getMonth()+1) + "-" + currentdate.getFullYear();
+let timeToday   = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+let letHours    = null;
 
-var sunState    = null;
-var amPM        = null;
-var nightTime   = null;
-var dayTime     = null;
-
-var currentdate = new Date(); 
-var zoneOffset  = currentdate.getTimezoneOffset() / 60;
-var dateToday   = currentdate.getDate() + "-" + (currentdate.getMonth()+1) + "-" + currentdate.getFullYear();
-var timeToday   = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
-var varHours    = null;
-
-var storyTitle  = null;
-var storyGuts   = null;
+let storyTitle  = null;
+let storyGuts   = null;
 
 $(document).ready(function() {
 	callReddit();
@@ -31,14 +27,12 @@ $(document).ready(function() {
 	});
 
 	locationGet();
-	timeStats();    
-
 });
 
 
 // Google Geocode API request
-function callGoogle() {
-	var googleRequest = {
+function callGoogle(inputLocation) {
+	let googleRequest = {
 		address: inputLocation,
 		key: 'AIzaSyBjoYUBZWys5JbkuUVznJIfnMBgfWT7iYE'
 	};
@@ -49,47 +43,34 @@ function callGoogle() {
 		dataType: 'json',
 		method: "GET"
 	})
-	.done(function(echo) {
-		console.log(echo);
+	.done(function(resp) {
+		const latitude  = resp.results[0].geometry.location.lat;
+		const longitude = resp.results[0].geometry.location.lng;
 
-		latitude  = echo.results[0].geometry.location.lat;
-		longitude = echo.results[0].geometry.location.lng;
-
-		callSun();
+		callSun(longitude, latitude);
 	});
 }
 
 // Sunshine API request
-function callSun() {
-	var sunRequest = {
-		lat: latitude,
-		lng: longitude,
-		date: dateToday
-	};
+function callSun(longitude, latitude) {
+	const lat =  latitude;
+	const lng = longitude;
 
 	$.ajax({
-		url: 'https://api.sunrise-sunset.org/json',
-		data: sunRequest,
-		dataType: 'jsonp',
-		type: 'GET'
+		url: `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=today`
 	})
-	.done(function(echo) {
-		console.log(echo);
-
-		sunSet = echo.results.sunset;
-		console.log(sunSet);
+	.done(function(resp) {
+		sunSet = resp.results.sunset;
 		timeSplit(sunSet);
 		sunStateCheck();
-
 		setStory();
-
 	});
 
 }
 
 // Reddit API request
 function callReddit() {
-	var redditRequest = {
+	let redditRequest = {
 		// q: "NOT+%28flair%3ASeries%29", 
 		// restrict_sr: "on",
 		sort: 'top'
@@ -102,14 +83,10 @@ function callReddit() {
 		dataType: 'json',
 		type: 'GET'
 	})
-	.done(function(echo) {
- 		console.log(echo);
-
- 		var randomIndex = numberGenerate();
-
- 		storyTitle  = echo.data.children[randomIndex].data.title;
- 		storyGuts   = echo.data.children[randomIndex].data.selftext;
- 		
+	.done(function(resp) {
+ 		let randomIndex = numberGenerate();
+ 		storyTitle  = resp.data.children[randomIndex].data.title;
+ 		storyGuts   = resp.data.children[randomIndex].data.selftext;
  		pushStory();
 	});
 }
@@ -124,23 +101,16 @@ function pushStory() {
 	$("#story-guts").append(storyGuts);
 }
 
-// Console command -- log the current time at user's PC
-function timeStats() {
-    console.log("Date: " + dateToday);
-    console.log("Time: " + timeToday);
-    console.log("Time difference from UTC: " + zoneOffset);
-    console.log("Time adjusted to UTC: " + (currentdate.getHours() + zoneOffset) + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
-}
-
 function locationGet() {
 	$("#input-location").submit(function(event) {
 		event.preventDefault();
 
-		inputLocation = $("#location-form").val();
+		const inputLocation = $("#location-form").val();
 		
-		callGoogle();
+		callGoogle(inputLocation);
 		
 		$("#input-location").hide();
+		$("#impatient-button").show();
 	});
 }
 
@@ -189,18 +159,12 @@ function sunStateCheck() {
 		}
 	}
 
-	console.log(timeToday + " " + amPM);
-
-	if ( timeToday == sunSet ) {
-		console.log('The Sun is setting.');
-	} else if ( timeToday < sunSet ) {
-		console.log('The Sun has not set. Everything is calm.');
+	if ( timeToday < sunSet ) {
 		dayTime   = true;
 		nightTime = false;
 	} else {
 		dayTime   = false;
 		nightTime = true;
-		console.log('The Sun has set. Do not be afraid.')
 	}
 
 	setScenery();
@@ -208,21 +172,18 @@ function sunStateCheck() {
 
 
 function timeSplit(stringToSplit) {
-	var firstArray  = stringToSplit.split(':');
-	var noAmPm = firstArray[2].split(' ');
+	let firstArray  = stringToSplit.split(':');
+	let noAmPm = firstArray[2].split(' ');
 
 	sunSet = firstArray[0] + firstArray[1] + noAmPm[0];
 	sunSet = parseInt(sunSet, 10);
-	
-	console.log(sunSet);
-
 }
 
 function setScenery() {
-
 	if ( !dayTime ) {
 		$("#day-video").hide();
 		$("#night-video").show();
+	} else {
+		$(".form-text")[0].textContent = 'The Sun has not set. Everything is calm.';
 	}
-
 }
